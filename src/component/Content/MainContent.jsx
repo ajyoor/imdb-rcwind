@@ -1,6 +1,65 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { getUpcomingMovieList, searchMovie } from "../../Api";
+import moment from "moment";
+import $ from "jquery";
 
 export const MainContent = () => {
+  const [loading, setLoading] = useState("active");
+  const [upcomingMovies, setUpcomingMovies] = useState([]);
+  useEffect(() => {
+    // setUpcomingMovies(getMovieList());
+    if (loading == "active") {
+      let timerFunc = setTimeout(() => {
+        getUpcomingMovieList().then((keys) => {
+          setUpcomingMovies(keys);
+          setLoading("non-active");
+        });
+      }, 5000);
+      return () => clearTimeout(timerFunc);
+    }
+  }, []);
+
+  const UpcomingMoviesList = () => {
+    return upcomingMovies.map((movie, index) => {
+      return (
+        <div
+          key={index}
+          className="carousel-item group/item group/item relative"
+        >
+          <img
+            src={`${import.meta.env.VITE_SOME_BASEIMGURL}/${movie.poster_path}`}
+            alt={movie.original_title}
+            className="hover:opacity-20 w-full"
+          />
+          <div className="hidden group-hover/item:flex absolute flex-col gap-2 justify-center items-center top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+            <span className="text-yellow-300 italic text-sm">
+              {moment(movie.release_date).format("D MMMM YYYY")}
+            </span>
+            <span className="text-3xl">{movie.original_title}</span>
+            <span>{movie.overview}</span>
+          </div>
+        </div>
+      );
+    });
+  };
+  const SkeletonUpcoming = () => {
+    return (
+      <>
+        {Array(7)
+          .fill(true)
+          .map((item, index) => (
+            <div key={index} className="carousel-item flex-col mx-3 gap-4">
+              {item}
+              <div className="skeleton h-32 "></div>
+              <div className="skeleton h-4 w-28"></div>
+              <div className="skeleton h-4 w-48"></div>
+              <div className="skeleton h-4 w-full"></div>
+            </div>
+          ))}
+      </>
+    );
+  };
+
   return (
     <div className="p-7">
       <span className="block w-full text-left text-2xl">Now Trending</span>
@@ -26,61 +85,11 @@ export const MainContent = () => {
         Upcoming Movies
       </span>
       <div className="mt-5 carousel carousel-center rounded-box">
-        <div className="carousel-item group/item h group/item relative">
-          <img
-            src="https://daisyui.com/images/stock/photo-1559703248-dcaaec9fab78.jpg"
-            alt="Pizza"
-            className="hover:opacity-20 w-full"
-          />
-          <div className="hidden group-hover/item:flex absolute flex-col gap-2 justify-center items-center top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-            <span className="text-yellow-300 italic text-sm">
-              20 Oct 2024
-            </span>
-            <span className="text-3xl">Judul</span>
-            <span>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Culpa
-              nihil aliquid minima expedita? Eum tempore tenetur, repellat
-              repudiandae sequi harum ex quibusdam quas magnam nihil dolore
-              facere atque veritatis sit.
-            </span>
-          </div>
-        </div>
-        <div className="carousel-item">
-          <img
-            src="https://daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.jpg"
-            alt="Pizza"
-          />
-        </div>
-        <div className="carousel-item">
-          <img
-            src="https://daisyui.com/images/stock/photo-1572635148818-ef6fd45eb394.jpg"
-            alt="Pizza"
-          />
-        </div>
-        <div className="carousel-item">
-          <img
-            src="https://daisyui.com/images/stock/photo-1494253109108-2e30c049369b.jpg"
-            alt="Pizza"
-          />
-        </div>
-        <div className="carousel-item">
-          <img
-            src="https://daisyui.com/images/stock/photo-1550258987-190a2d41a8ba.jpg"
-            alt="Pizza"
-          />
-        </div>
-        <div className="carousel-item">
-          <img
-            src="https://daisyui.com/images/stock/photo-1559181567-c3190ca9959b.jpg"
-            alt="Pizza"
-          />
-        </div>
-        <div className="carousel-item">
-          <img
-            src="https://daisyui.com/images/stock/photo-1601004890684-d8cbf643f5f2.jpg"
-            alt="Pizza"
-          />
-        </div>
+        {loading != "active" ? (
+          <UpcomingMoviesList></UpcomingMoviesList>
+        ) : (
+          <SkeletonUpcoming></SkeletonUpcoming>
+        )}
       </div>
       {/* recommendation movies */}
       <span className="block w-full text-left text-2xl pt-5">
