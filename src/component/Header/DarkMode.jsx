@@ -1,26 +1,24 @@
 import React, { useState } from "react";
 import { CiLight } from "react-icons/ci";
 import { MdDarkMode } from "react-icons/md";
+import $ from "jquery";
 
 export const DarkMode = () => {
-  const [dark, setDark] = useState("dark");
+  const [dark, setDark] = useState("synthwave");
   const toggleDarkmode = () => {
-    let root = document.documentElement;
-    let res = dark != "dark" ? "dark" : "light";
+    let res = dark != "synthwave" ? "synthwave" : "bumblebee";
     setDark(res);
-    root.classList.remove(dark);
-    root.classList.add(res);
+    // root.classList.remove(dark);
+    // root.classList.add(res);
+    $("html").attr("data-theme", res);
   };
 
   return (
-    <div>
-      {dark == "dark" ? (
-        <CiLight onClick={toggleDarkmode} />
+    <div className="btn btn-ghost btn-circle" onClick={toggleDarkmode}>
+      {dark == "synthwave" ? (
+        <CiLight className="icon-toggle" size="23px" />
       ) : (
-        <MdDarkMode
-          className="cursor-pointer text-slate-950"
-          onClick={toggleDarkmode}
-        />
+        <MdDarkMode className="icon-toggle" size="23px" />
       )}
     </div>
   );
