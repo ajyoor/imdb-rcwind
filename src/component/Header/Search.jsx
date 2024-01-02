@@ -1,16 +1,25 @@
 import React, { useState } from "react";
 import { IoMdClose } from "react-icons/io";
+import { searchMovie } from "../../Api";
 
-export const Search = () => {
+export const Search = ({ resApiSearch }) => {
   const [search, setSearch] = useState(0);
   const toggleSearch = (e) => {
     let res = e.currentTarget.value;
     res == "true" ? setSearch(1) : setSearch(0);
   };
-  const searchMovies = (e) => {
-    console.log(e.target.value)
-  }
-  
+
+  const searchMovies = async (e) => {
+    let thisVals = e.target.value;
+    if (thisVals.length >= 3) {
+      const dataSearch = await searchMovie(thisVals);
+      // setUpcomingMovies(dataSearch.results);
+      resApiSearch(dataSearch.results);
+    } else {
+      resApiSearch([])
+    }
+  };
+
   return (
     <>
       {search == 1 ? (
@@ -19,7 +28,7 @@ export const Search = () => {
             type="text"
             placeholder="Type here"
             className="input input-bordered input-sm w-full max-w-xs transition ease-in-out delay-150 duration-300"
-            onChange={searchMovies}
+            onKeyUp={searchMovies}
           />
           <IoMdClose
             className="absolute right-[10px] top-[7px] cursor-pointer"

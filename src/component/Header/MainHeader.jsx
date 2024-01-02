@@ -1,11 +1,18 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { DarkMode } from "./DarkMode";
 import { Search } from "./Search";
+import { Link } from "react-router-dom";
 
-export const MainHeader = () => {
+const MainHeader = ({ dataSearch }) => {
+  const [datas, setDatas] = useState("");
+
+  useEffect(() => {
+    dataSearch(datas);
+  }, []);
+
   return (
-    <div className="navbar bg-base-100">
-      <div className="navbar-start">
+    <div className="navbar bg-base-100 px-0">
+      <div className="navbar-start px-0">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
             <svg
@@ -37,12 +44,16 @@ export const MainHeader = () => {
         </div>
       </div>
       <div className="navbar-center">
-        <a className="btn btn-ghost text-3xl">movLabs</a>
+        <Link to="/" className="btn btn-ghost text-3xl">
+          movLabs
+        </Link>
       </div>
       <div className="navbar-end">
-        <Search></Search>
+        <Search resApiSearch={setDatas}></Search>
         <DarkMode className="cursor-pointer"></DarkMode>
       </div>
     </div>
   );
 };
+
+export default MainHeader;

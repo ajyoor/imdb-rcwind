@@ -1,23 +1,42 @@
 import React, { useEffect, useState } from "react";
-import { getUpcomingMovieList, searchMovie } from "../../Api";
 import moment from "moment";
 import $ from "jquery";
+import {
+  getUpcomingMovieList,
+  getListFirstRow,
+  getListLastRow,
+} from "../../Api";
 
-export const MainContent = () => {
+import { Link } from "react-router-dom";
+
+const MainContent = ({ search }) => {
   const [loading, setLoading] = useState("active");
   const [upcomingMovies, setUpcomingMovies] = useState([]);
+  const [nowPlayingMovies, setNowPlayingMovies] = useState([]);
+
+  // false = movie, true = series
+  const [typeFirstList, setTypeFirstList] = useState(false);
+  const [upcoming, setUpcoming] = useState(false);
+
   useEffect(() => {
     // setUpcomingMovies(getMovieList());
-    if (loading == "active") {
-      let timerFunc = setTimeout(() => {
-        getUpcomingMovieList().then((keys) => {
+    setLoading("active");
+    let timerFunc = setTimeout(() => {
+      if (search.length != 0) {
+        setUpcomingMovies(search);
+        setLoading("non-active");
+      } else {
+        getUpcomingMovieList(upcoming).then((keys) => {
           setUpcomingMovies(keys);
-          setLoading("non-active");
         });
-      }, 5000);
-      return () => clearTimeout(timerFunc);
-    }
-  }, []);
+        getListFirstRow(typeFirstList).then((keys) => {
+          setNowPlayingMovies(keys);
+        });
+        setLoading("non-active");
+        return () => clearTimeout(timerFunc);
+      }
+    }, 1000);
+  }, [typeFirstList, upcoming]);
 
   const UpcomingMoviesList = () => {
     return upcomingMovies.map((movie, index) => {
@@ -42,10 +61,40 @@ export const MainContent = () => {
       );
     });
   };
-  const SkeletonUpcoming = () => {
+
+  const ListCardMoviesList = () => {
+    return nowPlayingMovies.map((np, index) => {
+      return (
+        <div
+          key={index}
+          className="card card-compact xl:w-96 lg:w-80 sm:w-auto bg-base-100 shadow-2xl border border-yellow-100"
+        >
+          <figure>
+            <img
+              src={`${import.meta.env.VITE_SOME_BASEIMGURL}/${np.poster_path}`}
+              alt={np.original_title}
+            />
+          </figure>
+          <div className="card-body h-[228px]">
+            <h2 className="card-title font-bold text-xl">
+              {np.original_title}
+            </h2>
+            <p className="text-justify h-[100px] overflow-hidden">
+              {np.overview}
+            </p>
+            <div className="card-actions justify-end">
+              <button className="btn btn-primary">Detail</button>
+            </div>
+          </div>
+        </div>
+      );
+    });
+  };
+
+  const SkeletonCard = () => {
     return (
       <>
-        {Array(7)
+        {Array(6)
           .fill(true)
           .map((item, index) => (
             <div key={index} className="carousel-item flex-col mx-3 gap-4">
@@ -60,35 +109,66 @@ export const MainContent = () => {
     );
   };
 
+  const handleToggleType = (e) => {
+    let res = e.target.getAttribute("vals");
+    return res == "now"
+      ? setTypeFirstList(e.target.checked)
+      : setUpcoming(e.target.checked);
+  };
+
   return (
-    <div className="p-7">
-      <span className="block w-full text-left text-2xl">Now Trending</span>
-      <div className="pt-5 grid xl:grid-cols-3 sm:grid-cols-2 m-auto w-full gap-5 place-items-center">
-        <div className="card xl:w-96 sm:w-auto bg-base-100 shadow-2xl">
-          <figure>
-            <img
-              src="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
-              alt="Shoes"
+    <div className="mx-">
+      <div className="w-full flex justify-between items-center pt-5">
+        <span className="block text-2xl mx-[5px]">
+          {typeFirstList ? "Now On The Air" : "Now Trending"}
+        </span>
+        <div className="flex gap-5">
+          <label className="swap btn btn-sm btn-outline btn-secondary">
+            <input
+              vals="now"
+              type="checkbox"
+              onChange={(e) => handleToggleType(e)}
             />
-          </figure>
-          <div className="card-body">
-            <h2 className="card-title">Shoes!</h2>
-            <p>If a dog chews shoes whose shoes does he choose?</p>
-            <div className="card-actions justify-end">
-              <button className="btn btn-primary">Buy Now</button>
-            </div>
-          </div>
+            <div className="swap-on">Series</div>
+            <div className="swap-off">Movies</div>
+          </label>
+          <Link to="/detail">
+            <button className="btn btn-sm btn-outline">Explore More</button>
+          </Link>
         </div>
       </div>
+      {/* <div className="pt-5 grid xl:grid-cols-3 sm:grid-cols-2 m-auto w-full gap-5 place-items-center"> */}
+      <div className="pt-5 flex flex-wrap gap-8 items-start justify-center">
+        {loading != "active" ? (
+          <>
+            <ListCardMoviesList></ListCardMoviesList>
+          </>
+        ) : (
+          <SkeletonCard></SkeletonCard>
+        )}
+      </div>
       {/* upcoming movies */}
-      <span className="block w-full text-left text-2xl pt-5">
-        Upcoming Movies
-      </span>
+      <div className="flex justify-between items-center pt-5">
+        <span className="block w-full text-left text-2xl">
+          {upcoming ? "Popular Series" : "Upcoming Movies"}
+        </span>
+        <label className="swap btn btn-sm btn-outline btn-secondary">
+          <input
+            vals="upcoming"
+            type="checkbox"
+            onChange={(e) => handleToggleType(e)}
+          />
+          <div className="swap-on">Series</div>
+          <div className="swap-off">Movies</div>
+        </label>
+      </div>
       <div className="mt-5 carousel carousel-center rounded-box">
         {loading != "active" ? (
-          <UpcomingMoviesList></UpcomingMoviesList>
+          <>
+            <UpcomingMoviesList></UpcomingMoviesList>
+          </>
         ) : (
-          <SkeletonUpcoming></SkeletonUpcoming>
+          <SkeletonCard></SkeletonCard>
         )}
       </div>
       {/* recommendation movies */}
@@ -115,3 +195,5 @@ export const MainContent = () => {
     </div>
   );
 };
+
+export default MainContent;
