@@ -140,9 +140,9 @@ const MainContent = ({ search }) => {
             <div className="swap-on">Series</div>
             <div className="swap-off">Movies</div>
           </label>
-          <Link to="/detail">
+          {/* <Link to="/detail">
             <button className="btn btn-sm btn-outline">Explore More</button>
-          </Link>
+          </Link> */}
         </div>
       </div>
       <div className="pt-5 grid grid-cols-3 gap-8 items-start justify-center sm:grid sm:grid-cols-2">
@@ -179,7 +179,7 @@ const MainContent = ({ search }) => {
         )}
       </div>
       {/* recommendation movies */}
-      <span className="block w-full text-left text-2xl pt-5">
+      {/* <span className="block w-full text-left text-2xl pt-5">
         Recommendation
       </span>
       <div className="pt-5 grid xl:grid-cols-3 sm:grid-cols-2 m-auto w-full gap-5 place-items-center">
@@ -198,7 +198,7 @@ const MainContent = ({ search }) => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

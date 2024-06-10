@@ -49,7 +49,7 @@ const MainHeader = ({ dataSearch }) => {
         </Link>
       </div>
       <div className="navbar-end">
-        <Search resApiSearch={setDatas}></Search>
+        {/* <Search resApiSearch={setDatas}></Search> */}
         <DarkMode className="cursor-pointer"></DarkMode>
       </div>
     </div>
