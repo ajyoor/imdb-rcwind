@@ -19,7 +19,7 @@ export const getListFirstRow = async (type) => {
       type == false ? "movie/now_playing" : "tv/on_the_air"
     }?api_key=${apiKey}`
   );
-  return listCardFirstMovie.data.results.slice(0,6);
+  return listCardFirstMovie.data.results.slice(0, 6);
 };
 
 export const getListLastRow = async (type) => {
@@ -34,4 +34,12 @@ export const searchMovie = async (text) => {
     `${baseURL}/search/movie?api_key=${apiKey}&query=${text}`
   );
   return search.data;
+};
+
+export const getDetailMovie = async (idData, typeData) => {
+  typeData = typeData == "m" ? "movie" : "tv";
+  const data = await axios.get(
+    `${baseURL}/${typeData}/${idData}?api_key=${apiKey}`
+  );
+  return data.data;
 };

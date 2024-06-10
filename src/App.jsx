@@ -9,7 +9,7 @@ function App() {
   const [searchResult, isSearchResult] = useState([]);
 
   return (
-    <div className="container mx-auto">
+    <div className="md:container mx-auto">
       <MainHeader dataSearch={isSearchResult}></MainHeader>
       {/* <MainContent search={searchResult}></MainContent> */}
       <Root search={searchResult}></Root>

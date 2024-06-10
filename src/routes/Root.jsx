@@ -7,8 +7,7 @@ const Root = ({ search }) => {
   return (
     <Routes>
       <Route path="/" element={<MainContent search={search} />} />
-      <Route path="/detail" element={<DetailContent />} />
-      {/* <Route path="/data/detail/:id" element={<DetailContent />} /> */}
+      <Route path="/detail/:id" element={<DetailContent />} />
     </Routes>
   );
 };

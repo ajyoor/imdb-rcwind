@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import moment from "moment";
-import $ from "jquery";
 import {
   getUpcomingMovieList,
   getListFirstRow,
@@ -38,6 +37,10 @@ const MainContent = ({ search }) => {
     }, 1000);
   }, [typeFirstList, upcoming]);
 
+  useEffect(() => {
+    console.log(search, " rujben");
+  }, [search]);
+
   const UpcomingMoviesList = () => {
     return upcomingMovies.map((movie, index) => {
       return (
@@ -73,17 +76,22 @@ const MainContent = ({ search }) => {
             <img
               src={`${import.meta.env.VITE_SOME_BASEIMGURL}/${np.poster_path}`}
               alt={np.original_title}
+              className="md:h-[453px] sm:w-auto sm:h-[275px]"
             />
           </figure>
           <div className="card-body h-[228px]">
-            <h2 className="card-title font-bold text-xl">
-              {np.original_title}
+            <h2 className="card-title font-bold text-xl text-center justify-center items-center h-[56px] sm:text-sm">
+              {np.original_title || np.original_name}
             </h2>
-            <p className="text-justify h-[100px] overflow-hidden">
-              {np.overview}
+            <p className="text-justify h-[55px] flex-grow-0 dot-lines sm:h-[60px] sm:text-sm sm:text-start">
+              {np.overview || "Coming Soon..."}
             </p>
-            <div className="card-actions justify-end">
-              <button className="btn btn-primary">Detail</button>
+            <div className="card-actions justify-end mt-[13px]">
+              <Link to={`/detail/${typeFirstList ? "s" : "m"}${np.id}`}>
+                <button className="btn btn-primary sm:min-h-[15px] sm:p-[10px] sm:h-auto">
+                  Detail
+                </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -117,9 +125,9 @@ const MainContent = ({ search }) => {
   };
 
   return (
-    <div className="mx-">
+    <div className="px-3">
       <div className="w-full flex justify-between items-center pt-5">
-        <span className="block text-2xl mx-[5px]">
+        <span className="block text-2xl mx-[5px] sm:text-sm">
           {typeFirstList ? "Now On The Air" : "Now Trending"}
         </span>
         <div className="flex gap-5">
@@ -137,8 +145,7 @@ const MainContent = ({ search }) => {
           </Link>
         </div>
       </div>
-      {/* <div className="pt-5 grid xl:grid-cols-3 sm:grid-cols-2 m-auto w-full gap-5 place-items-center"> */}
-      <div className="pt-5 flex flex-wrap gap-8 items-start justify-center">
+      <div className="pt-5 grid grid-cols-3 gap-8 items-start justify-center sm:grid sm:grid-cols-2">
         {loading != "active" ? (
           <>
             <ListCardMoviesList></ListCardMoviesList>
